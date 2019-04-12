@@ -196,9 +196,10 @@ void MainWindow::doMistake()
 
     if(firstImg != nullptr)
     {
-        for(int i = 0; i < firstImg->height(); ++i)
+        for(int i = 0; i < firstImg->width(); ++i)
         {
-            for(int j = 0; j < firstImg->width(); ++j)
+
+            for(int j = 0; j < firstImg->height(); ++j)
             {
                 QColor colorB = binaryImg->pixelColor(i, j);
                 QColor colorG = grayImg->pixelColor(i, j);

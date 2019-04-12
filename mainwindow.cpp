@@ -1,32 +1,30 @@
 #include "mainwindow.h"
-#include <cstdlib>
-#include <time.h>
+
+
+
 MainWindow::MainWindow(QWidget *parent)
 {
     Q_UNUSED(parent);
 
-    auto scene = new QGraphicsScene;
-
     dialog = new QFileDialog;
 
-    scene_result = new QGraphicsScene;
-    auto view_result = new QGraphicsView(scene_result);
+    auto scene = new QGraphicsScene;
 
-    auto btn_mistake = new QPushButton("Сделать ошибку");
-    auto btn_source = new QPushButton("Вернуть в первичное состояние");
-    auto btn_choose = new QPushButton("Выбрать изображение");
+    auto btnMistake = new QPushButton("Сделать ошибку");
+    auto btnSource = new QPushButton("Вернуть в первичное состояние");
+    auto btnChoose = new QPushButton("Выбрать изображение");
 
     pix = new MyImage(QPixmap(":/first.png"));
     pix->setPos(0,0);
     scene->addItem(pix);
 
-    pix_binary = new MyImage(QPixmap(":/first.png"));
-    pix_binary->setPos(pix->pixmap().width(),0);
-    scene->addItem(pix_binary);
+    pixBinary = new MyImage(QPixmap(":/first.png"));
+    pixBinary->setPos(pix->pixmap().width(),0);
+    scene->addItem(pixBinary);
 
-    pix_gray = new MyImage(QPixmap(":/first.png"));
-    pix_gray->setPos(pix->pixmap().width()*2,0);
-    scene->addItem(pix_gray);
+    pixGray = new MyImage(QPixmap(":/first.png"));
+    pixGray->setPos(pix->pixmap().width()*2,0);
+    scene->addItem(pixGray);
 
     img1 = new QImage(64, 64, QImage::Format_RGB32);
     img2 = new QImage(64, 64, QImage::Format_RGB32);
@@ -44,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     pix2->setPos(0, 95);
     pix3->setPos(0, 175);
 
-    text1 = new QGraphicsSimpleTextItem("Изначальный цвет");
+    text1 = new QGraphicsSimpleTextItem("Изначальный цвет\n");
     text2 = new QGraphicsSimpleTextItem("Цвет с ошибкой в двоичной системе");
     text3 = new QGraphicsSimpleTextItem("Цвет с ошибкой в системе Грея");
 
@@ -52,58 +50,55 @@ MainWindow::MainWindow(QWidget *parent)
     text2->setPos(0,80);
     text3->setPos(0,160);
 
-    scene_result->addItem(text1);
-    scene_result->addItem(text2);
-    scene_result->addItem(text3);
+    sceneResult = new QGraphicsScene;
+    auto viewResult = new QGraphicsView(sceneResult);
 
-    scene_result->addItem(pix1);
-    scene_result->addItem(pix2);
-    scene_result->addItem(pix3);
+    sceneResult->addItem(text1);
+    sceneResult->addItem(text2);
+    sceneResult->addItem(text3);
 
-    ch_red = new QCheckBox("Красный");
-    ch_green = new QCheckBox("Зеленый");
-    ch_blue = new QCheckBox("Синий");
+    sceneResult->addItem(pix1);
+    sceneResult->addItem(pix2);
+    sceneResult->addItem(pix3);
 
-    connect(btn_choose, SIGNAL(clicked()), SLOT(openImg()));
-    connect(btn_mistake, SIGNAL(clicked()), SLOT(doMistake()));
-    connect(btn_source, SIGNAL(clicked()), SLOT(goToSource()));
+    connect(btnChoose, SIGNAL(clicked()), SLOT(openImg()));
+    connect(btnMistake, SIGNAL(clicked()), SLOT(doMistake()));
+    connect(btnSource, SIGNAL(clicked()), SLOT(goToSource()));
 
-    connect(pix, SIGNAL(sendPos(QPoint)), SLOT(fail(QPoint)));
-    connect(pix_binary, SIGNAL(sendPos(QPoint)), SLOT(showFail(QPoint)));
-    connect(pix_gray, SIGNAL(sendPos(QPoint)), SLOT(showFail(QPoint)));
+    connect(pix, SIGNAL(sendPos(QPoint)), SLOT(showFail(QPoint)));
+    connect(pixBinary, SIGNAL(sendPos(QPoint)), SLOT(showFail(QPoint)));
+    connect(pixGray, SIGNAL(sendPos(QPoint)), SLOT(showFail(QPoint)));
 
-    auto view = new QGraphicsView(scene);
+    view = new QGraphicsView(scene);
     view->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-    //view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     view->setRenderHints( QPainter::Antialiasing );
-    //view->setFixedSize(pix->pixmap().width()*3+3, pix->pixmap().height()+3);
+    view->setFixedSize(pix->pixmap().width()*3+3, pix->pixmap().height()+3);
 
-    //view_result->setFixedSize(70,200);
+    viewResult->setRenderHints( QPainter::Antialiasing );
+    viewResult->setFixedSize(200, 300);
 
-    auto h_lay1 = new QHBoxLayout;
-    h_lay1->setAlignment(Qt::AlignLeft);
-    h_lay1->addWidget(btn_mistake);
+    auto hLay1 = new QHBoxLayout;
 
-    h_lay1->addWidget(ch_red);
-    h_lay1->addWidget(ch_green);
-    h_lay1->addWidget(ch_blue);
-    h_lay1->addWidget(btn_source);
+    hLay1->setAlignment(Qt::AlignLeft);
+    hLay1->addWidget(btnMistake);
+    hLay1->addWidget(btnSource);
 
-    auto v_lay1 = new QVBoxLayout;
-    v_lay1->addWidget(view);
-    v_lay1->addLayout(h_lay1);
+    auto vLay1 = new QVBoxLayout;
+    vLay1->addWidget(view);
+    vLay1->addLayout(hLay1);
 
-    auto v_lay2 = new QVBoxLayout;
-    v_lay2->addWidget(view_result);
-    v_lay2->addWidget(btn_choose);
+    auto vLay2 = new QVBoxLayout;
+    vLay2->addWidget(viewResult);
+    vLay2->addWidget(btnChoose);
 
-    auto general_lay = new QHBoxLayout;
-    general_lay->addLayout(v_lay1);
-    general_lay->addLayout(v_lay2);
+    auto generalLay = new QHBoxLayout;
+    generalLay->addLayout(vLay1);
+    generalLay->addLayout(vLay2);
 
-    setLayout(general_lay);
+    setLayout(generalLay);
 }
 
 MainWindow::~MainWindow()
@@ -111,10 +106,7 @@ MainWindow::~MainWindow()
 
 }
 
-void MainWindow::doFail(unsigned short bin, unsigned short gray)
-{
 
-}
 
 void MainWindow::openImg()
 {
@@ -133,12 +125,13 @@ void MainWindow::openImg()
 
         pix->setPixmap(QPixmap::fromImage(*firstImg));
 
-        pix_binary->setPixmap(QPixmap::fromImage(*binaryImg));
-        pix_binary->setPos(pix->pixmap().width(),0);
+        pixBinary->setPixmap(QPixmap::fromImage(*binaryImg));
+        pixBinary->setPos(pix->pixmap().width()+3, 0);
 
-        pix_gray->setPixmap(QPixmap::fromImage(*grayImg));
-        pix_gray->setPos(pix->pixmap().width()*2,0);
+        pixGray->setPixmap(QPixmap::fromImage(*grayImg));
+        pixGray->setPos(pix->pixmap().width()*2+6, 0);
 
+        view->setFixedSize(pix->pixmap().width()*3+3, pix->pixmap().height()+3);
     }
 }
 
@@ -148,8 +141,9 @@ void MainWindow::goToSource()
     {
         binaryImg = new QImage(*firstImg);
         grayImg = new QImage(*firstImg);
-        pix_binary->setPixmap(QPixmap::fromImage(*firstImg));
-        pix_gray->setPixmap(QPixmap::fromImage(*firstImg));
+
+        pixBinary->setPixmap(QPixmap::fromImage(*firstImg));
+        pixGray->setPixmap(QPixmap::fromImage(*firstImg));
     }
 }
 
@@ -169,9 +163,36 @@ void MainWindow::showFail(QPoint pos)
 
 }
 
+void MainWindow::doFail(unsigned short& bin, unsigned short& gray)
+{
+
+    unsigned short _bin = bin;
+
+    int countBin = 0;
+
+    while(_bin)
+    {
+        _bin >>= 1;
+        ++countBin;
+    }
+
+    if (!bin)
+    {
+        int i = QRandomGenerator::global()->bounded(0, 7);
+        bin ^= static_cast<unsigned short>(qPow(2, i));
+        gray ^= static_cast<unsigned short>(qPow(2, i));
+    }
+    else
+    {
+        int i = QRandomGenerator::global()->bounded(0, countBin);
+        bin ^= static_cast<unsigned short>(qPow(2, i));
+        gray ^= static_cast<unsigned short>(qPow(2, i));
+    }
+
+}
+
 void MainWindow::doMistake()
 {
-    std::srand(static_cast<unsigned int>(time(nullptr)));
 
     if(firstImg != nullptr)
     {
@@ -179,7 +200,6 @@ void MainWindow::doMistake()
         {
             for(int j = 0; j < firstImg->width(); ++j)
             {
-
                 QColor colorB = binaryImg->pixelColor(i, j);
                 QColor colorG = grayImg->pixelColor(i, j);
 
@@ -193,111 +213,45 @@ void MainWindow::doMistake()
                 unsigned short b_g = static_cast<unsigned short>(colorB.green());
                 unsigned short b_b = static_cast<unsigned short>(colorB.blue());
 
-                /*if(ch_red->isChecked())
+
+                int temp = QRandomGenerator::global()->bounded(1, 7);
+
+                switch (temp)
                 {
-                    b_r == 255 ? b_r = 0 : ++b_r;
+                case 1 :
 
-                    if (convert2Bin(g_r) == 255){ gray.setRed(0);}
-                    else gray.setRed(nextGray(g_r));
+                    doFail(b_r, g_r);
+                    break;
+
+                case 2:
+                    doFail(b_g, g_g);
+                    break;
+
+                case 3:
+                    doFail(b_b, g_b);
+                    break;
+
+                case 4:
+                    doFail(b_r, g_r);
+                    doFail(b_g, g_g);
+                    break;
+
+                case 5:
+                    doFail(b_r, g_r);
+                    doFail(b_b, g_b);
+                    break;
+
+                case 6:
+                    doFail(b_g, g_g);
+                    doFail(b_b, g_b);
+                    break;
+
+                case 7:
+                    doFail(b_r, g_r);
+                    doFail(b_g, g_g);
+                    doFail(b_b, g_b);
+                    break;
                 }
-                if(ch_green->isChecked())
-                {
-                    b_g == 255 ? b_g = 0 : ++b_g;
-
-                    if (convert2Bin(g_g) == 255){ gray.setGreen(0);}
-                    else gray.setGreen(nextGray(g_g));
-                }
-                if(ch_blue->isChecked())
-                {
-                    b_b == 255 ? b_b = 0 : ++b_b;
-
-                    if (convert2Bin(g_b) == 255){ gray.setBlue(0);}
-                    else gray.setBlue(nextGray(g_b));
-                }
-
-                if(!ch_red->isChecked() && !ch_green->isChecked() && !ch_blue->isChecked())
-                {*/
-
-
-                    std::srand(time(NULL));
-
-                    int temp = 1 + std::rand() % 7;
-
-                    switch (temp) {
-                    case 1 :
-                        /*b_r == 255 ? b_r = 0 : ++b_r;
-
-                        if (convert2Bin(g_r) == 255){ gray.setRed(0);}
-                        else gray.setRed(nextGray(g_r));
-                        */
-
-                        doFail(b_r, g_r);
-
-
-                        break;
-
-                    case 2:
-                        b_g == 255 ? b_g = 0 : ++b_g;
-
-                        if (convert2Bin(g_g) == 255){ gray.setGreen(0);}
-                        else gray.setGreen(nextGray(g_g));
-                        break;
-
-                    case 3:
-                        b_b == 255 ? b_b = 0 : ++b_b;
-
-                        if (convert2Bin(g_b) == 255){ gray.setBlue(0);}
-                        else gray.setBlue(nextGray(g_b));
-                        break;
-
-                    case 4:
-                        b_r == 255 ? b_r = 0 : ++b_r;
-                        b_g == 255 ? b_g = 0 : ++b_g;
-
-                        if (convert2Bin(g_r) == 255){ gray.setRed(0);}
-                        else gray.setRed(nextGray(g_r));
-                        if (convert2Bin(g_g) == 255){ gray.setGreen(0);}
-                        else gray.setGreen(nextGray(g_g));
-                        break;
-
-                    case 5:
-                        b_r == 255 ? b_r = 0 : ++b_r;
-                        b_b == 255 ? b_b = 0 : ++b_b;
-
-                        if (convert2Bin(g_r) == 255){ gray.setRed(0);}
-                        else gray.setRed(nextGray(g_r));
-
-                        if (convert2Bin(g_b) == 255){ gray.setBlue(0);}
-                        else gray.setBlue(nextGray(g_b));
-                        break;
-
-                    case 6:
-                        b_g == 255 ? b_g = 0 : ++b_g;
-                        b_b == 255 ? b_b = 0 : ++b_b;
-
-                        if (convert2Bin(g_g) == 255){ gray.setGreen(0);}
-                        else gray.setGreen(nextGray(g_g));
-
-                        if (convert2Bin(g_b) == 255){ gray.setBlue(0);}
-                        else gray.setBlue(nextGray(g_b));
-                        break;
-
-                    case 7:
-                        b_r == 255 ? b_r = 0 : ++b_r;
-                        b_g == 255 ? b_g = 0 : ++b_g;
-                        b_b == 255 ? b_b = 0 : ++b_b;
-
-                        if (convert2Bin(g_r) >= 253){ gray.setRed(0);}
-                        else gray.setRed(nextGray(g_r));
-
-                        if (convert2Bin(g_g) >= 253){ gray.setGreen(0);}
-                        else gray.setGreen(nextGray(g_g));
-
-                        if (convert2Bin(g_b) >= 253){ gray.setBlue(0);}
-                        else gray.setBlue(nextGray(g_b));
-                        break;
-                    }
-               // }
 
                 colorB.setRed(b_r);
                 colorB.setGreen(b_g);
@@ -311,8 +265,9 @@ void MainWindow::doMistake()
                 grayImg->setPixelColor(i, j, colorG);
 
             }
+
         }
-        pix_binary->setPixmap(QPixmap::fromImage(*binaryImg));
-        pix_gray->setPixmap(QPixmap::fromImage(*grayImg));
+        pixBinary->setPixmap(QPixmap::fromImage(*binaryImg));
+        pixGray->setPixmap(QPixmap::fromImage(*grayImg));
     }
 }

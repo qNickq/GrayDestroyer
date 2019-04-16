@@ -258,9 +258,9 @@ void MainWindow::doMistake()
                 colorB.setGreen(b_g);
                 colorB.setBlue(b_b);
 
-                colorG.setRed(convert2Bin(gray.red()));
-                colorG.setGreen(convert2Bin(gray.green()));
-                colorG.setBlue(convert2Bin(gray.blue()));
+                colorG.setRed(convert2Bin(g_r));
+                colorG.setGreen(convert2Bin(g_g));
+                colorG.setBlue(convert2Bin(g_b));
 
                 binaryImg->setPixelColor(i, j, colorB);
                 grayImg->setPixelColor(i, j, colorG);

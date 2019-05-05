@@ -71,8 +71,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     view = new QGraphicsView(scene);
     view->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     view->setRenderHints( QPainter::Antialiasing );
     view->setFixedSize(pix->pixmap().width()*3+3, pix->pixmap().height()+3);
@@ -165,6 +165,8 @@ void MainWindow::showFail(QPoint pos)
 
 void MainWindow::doFail(unsigned short& bin, unsigned short& gray)
 {
+    for (int i = 0; i < 15; ++i)
+    {
 
     unsigned short _bin = bin;
 
@@ -188,7 +190,7 @@ void MainWindow::doFail(unsigned short& bin, unsigned short& gray)
         bin ^= static_cast<unsigned short>(qPow(2, i));
         gray ^= static_cast<unsigned short>(qPow(2, i));
     }
-
+}
 }
 
 void MainWindow::doMistake()
